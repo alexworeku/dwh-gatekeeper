@@ -1,0 +1,222 @@
+{
+  "trans_date_trans_time": {
+    "data_type": "string",
+    "required": true,
+    "max_length": null,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": "YYYY-MM-DD HH:MM:SS",
+    "validation_description": "Full transaction timestamp. Must be complete and in the specified format."
+  },
+  "cc_num": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 19,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": "NUMERIC_STRING",
+    "validation_description": "Credit card number (hashed/anonymized). Must be a string of digits."
+  },
+  "merchant": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 100,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Name or ID of the merchant. Must not be null and have a reasonable length."
+  },
+  "category": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 30,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": ["gas_transport", "grocery_pos", "entertainment", "food_dining", "miscellaneous", "travel", "health"],
+    "format_check": "LOWERCASE",
+    "validation_description": "Transaction category. Must be one of the typical allowed values and in lowercase."
+  },
+  "amt": {
+    "data_type": "float64",
+    "required": true,
+    "max_length": null,
+    "min_value": 0.01,
+    "max_value": 10000.00,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Transaction amount. Must be a positive float value."
+  },
+  "first": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 50,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's first name."
+  },
+  "last": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 50,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's last name."
+  },
+  "gender": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 1,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": ["F", "M", "O"],
+    "format_check": "UPPERCASE",
+    "validation_description": "Gender of the cardholder (F/M/O). Must be uppercase."
+  },
+  "street": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 100,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's street address."
+  },
+  "city": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 50,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's city."
+  },
+  "state": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 2,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": "UPPERCASE_ALPHA",
+    "validation_description": "Customer's state (2-letter code, e.g., AZ, CA)."
+  },
+  "zip": {
+    "data_type": "int64",
+    "required": true,
+    "max_length": null,
+    "min_value": 10000,
+    "max_value": 99999,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's ZIP code (5 digits)."
+  },
+  "lat": {
+    "data_type": "float64",
+    "required": true,
+    "max_length": null,
+    "min_value": -90.0,
+    "max_value": 90.0,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's latitude. Must be between -90.0 and 90.0."
+  },
+  "long": {
+    "data_type": "float64",
+    "required": true,
+    "max_length": null,
+    "min_value": -180.0,
+    "max_value": 180.0,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's longitude. Must be between -180.0 and 180.0."
+  },
+  "city_pop": {
+    "data_type": "int64",
+    "required": true,
+    "max_length": null,
+    "min_value": 100,
+    "max_value": 50000000,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Population of the customer's city. Must be a positive integer."
+  },
+  "job": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 100,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Customer's occupation."
+  },
+  "dob": {
+    "data_type": "string",
+    "required": true,
+    "max_length": null,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": "YYYY-MM-DD",
+    "validation_description": "Customer's date of birth. Used for age/risk calculation."
+  },
+  "trans_num": {
+    "data_type": "string",
+    "required": true,
+    "max_length": 50,
+    "min_value": null,
+    "max_value": null,
+    "allowed_values": null,
+    "format_check": "ALPHANUMERIC",
+    "validation_description": "Unique transaction identifier/reference number."
+  },
+  "unix_time": {
+    "data_type": "int64",
+    "required": true,
+    "max_length": null,
+    "min_value": 1500000000,
+    "max_value": 2000000000,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Transaction timestamp in Unix/epoch seconds. Must be a large positive integer."
+  },
+  "merch_lat": {
+    "data_type": "float64",
+    "required": true,
+    "max_length": null,
+    "min_value": -90.0,
+    "max_value": 90.0,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Merchant's latitude."
+  },
+  "merch_long": {
+    "data_type": "float64",
+    "required": true,
+    "max_length": null,
+    "min_value": -180.0,
+    "max_value": 180.0,
+    "allowed_values": null,
+    "format_check": null,
+    "validation_description": "Merchant's longitude."
+  },
+  "is_fraud": {
+    "data_type": "int8",
+    "required": true,
+    "max_length": null,
+    "min_value": 0,
+    "max_value": 1,
+    "allowed_values": [0, 1],
+    "format_check": null,
+    "validation_description": "Flag indicating if the transaction is fraudulent (0=No, 1=Yes)."
+  }
+}
