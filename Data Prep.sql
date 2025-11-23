@@ -8,7 +8,7 @@ describe trans_history;
 -- Select COLUMN_NAME, ORDINAL_POSITION,  IS_NULLABLE, DATA_TYPE
 Select *
 from INFORMATION_SCHEMA.COLUMNS
-where table_name = 'trans_history';
+where table_name = 'transactions_dw';
 
 select COLUMN_NAME, ORDINAL_POSITION,  IS_NULLABLE, DATA_TYPE, COLUMN_TYPE
 from INFORMATION_SCHEMA.COLUMNS
@@ -123,11 +123,12 @@ select
     merch_long,
     is_fraud
 from trans_history 
-limit 5;
+limit 35,10;
 
-select * from trans_history limit 2;
+rename table transactions TO transactions_dw;
 
-drop table TRANSACTION_RECORDS;
+rename table trans_history to transactions_source;
+
 
 
 
