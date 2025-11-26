@@ -34,8 +34,8 @@ def load_schema_from_db(db_user,db_passw, db_host,db_port, db_name,source_table,
         
 def find_columns_diff(src_schema_df, dest_schema_df):
     
-    src_columns = set(src_schema_df['COLUMN_NAME'][:21].values)
-    dest_columns = set(dest_schema_df['COLUMN_NAME'][5:].values)
+    src_columns = set(src_schema_df['COLUMN_NAME'].values)
+    dest_columns = set(dest_schema_df['COLUMN_NAME'].values)
 
     new_columns = src_columns - dest_columns
     removed_columns = dest_columns - src_columns
@@ -47,20 +47,20 @@ def find_columns_diff(src_schema_df, dest_schema_df):
 
 def validate_col_details(actual_col_schema_df, expected_col_schema_df):
     validation_result={}
+    issues_found_count=0
     for index,row in actual_col_schema_df.iterrows():
         expected_col_def = expected_col_schema_df[expected_col_schema_df['COLUMN_NAME']==row['COLUMN_NAME']].iloc[0]
         validation_result[row['COLUMN_NAME']]=[]
 
         # Data Type Validation
         if row['DATA_TYPE'] != expected_col_def['DATA_TYPE']:
-            
-            
             validation_result[row['COLUMN_NAME']].extend([{
                 'data_type': {
                     'expected': expected_col_def['DATA_TYPE'],
                     'actual': row['DATA_TYPE']
                 }
             }])
+            issues_found_count+=1
         # Ordinal position Validation 
         if row['ORDINAL_POSITION'] != expected_col_def['ORDINAL_POSITION'].item():
             validation_result[row['COLUMN_NAME']].extend([ {
@@ -69,6 +69,7 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
                     'actual': row['ORDINAL_POSITION']
                 }
             }])
+            issues_found_count+=1
         # Length validation
         if row['CHARACTER_MAXIMUM_LENGTH']!= expected_col_def['CHARACTER_MAXIMUM_LENGTH'].item():
             validation_result[row['COLUMN_NAME']].extend([ {
@@ -77,7 +78,8 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
                     'actual': row['ORDINAL_POSITION']
                 }
             }])
-    return validation_result        
+            issues_found_count+=1
+    return issues_found_count,validation_result        
     
 def validate(source_table, target_table):
     
@@ -97,11 +99,18 @@ def validate(source_table, target_table):
     cols_to_validate_df = src_col_schema_df[~src_col_schema_df['COLUMN_NAME'].isin(new_cols)]
 
 
-    col_validation_result = validate_col_details(cols_to_validate_df, target_col_schema_df)
+    issues_found_count, col_validation_result = validate_col_details(cols_to_validate_df, target_col_schema_df)
 
-
+    status = issues_found_count=="SUCCESS" if issues_found_count==0 else "FAILED"
     val_result = {
-        
+        "validation_summary":{
+            "status":status,
+            "total_columns_compared":len(cols_to_validate_df),
+            "total_schema_issues": issues_found_count,
+            "new_columns_found": len(new_cols),
+            "removed_columns_found": len(removed_cols)
+            
+        },
         "col_diff":{
                 "new_columns": list(new_cols),
                 "removed_columns": list(removed_cols)    
