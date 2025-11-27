@@ -1,23 +1,31 @@
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import logging
 from sqlalchemy import create_engine
 from collections import namedtuple
-import os
 from datetime import datetime
 
 
-def load_schema_from_db(db_user,db_passw, db_host,db_port, db_name,source_table,target_table):
+def load_schema_from_db(source_table,target_table):
 
-    # Removed Columns: IS_NULLABLE, COLUMN_TYPE
     query = """
     select COLUMN_NAME, ORDINAL_POSITION, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
     from INFORMATION_SCHEMA.COLUMNS
     where table_name
     """
 
-    DATABASE_URL = f"mysql+mysqlconnector://{db_user}:{db_passw}@{db_host}:{db_port}/{db_name}"
     
     try:
+        
+        env_variables=load_required_db_vars()
+        DB_HOST = env_variables['DB_HOST']
+        DB_PORT = env_variables['DB_PORT']
+        DB_USER = env_variables["DB_USER"]
+        DB_PASSW = env_variables['DB_PASSW']
+        DB_NAME = env_variables['DB_NAME']
+       
+        DATABASE_URL = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSW}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
         engine = create_engine(DATABASE_URL)
         
         src_col_schema_df = pd.read_sql(f"{query} = '{source_table}';",engine)
@@ -83,10 +91,11 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
             issues_found_count+=1
     return issues_found_count,validation_result        
     
-def validate(source_table, target_table,DB_USER,DB_PASSW,DB_HOST,DB_PORT,DB_NAME):
+def validate(source_table, target_table):
+
     logging.info("Starting schema validation for Source: '%s' against Target: '%s'.", source_table, target_table)
 
-    src_col_schema_df, target_col_schema_df=load_schema_from_db(DB_USER,DB_PASSW,DB_HOST,DB_PORT,DB_NAME, source_table,target_table )
+    src_col_schema_df, target_col_schema_df=load_schema_from_db(source_table,target_table )
     
     # Find added & removed columns
     new_cols, removed_cols = find_columns_diff(src_col_schema_df,target_col_schema_df)
@@ -129,3 +138,31 @@ def validate(source_table, target_table,DB_USER,DB_PASSW,DB_HOST,DB_PORT,DB_NAME
     else:
         logging.warning("Schema validation finished: FAILED. Total issues detected: %d.", total_issues_count)
     return val_result
+
+def load_required_db_vars():
+
+    # Load the .env file first (handles missing file by returning False)
+    if not load_dotenv(".env"):
+        logging.warning("'.env' file not found. Checking system environment variables.")
+
+    try:
+        DB_HOST = os.environ['DB_HOST']
+        DB_PORT = os.environ['DB_PORT']
+        DB_USER = os.environ["DB_USER"]
+        DB_PASSW = os.environ['DB_PASSW']
+        DB_NAME = os.environ['DB_NAME']
+        
+        return {
+            'DB_HOST': DB_HOST,
+            'DB_PORT': DB_PORT,
+            'DB_USER': DB_USER,
+            'DB_PASSW': DB_PASSW,
+            'DB_NAME': DB_NAME,
+        }
+
+    except KeyError as e:
+        missing_var = str(e).strip("'")
+        logging.error(f"""\nCRITICAL ERROR: Required variable '{missing_var}' is missing. 
+                      Please ensure your .env file or environment defines all 5 mandatory variables: DB_HOST, DB_PORT, DB_USER, DB_PASSW, DB_NAME
+                      """)
+        exit(1)
