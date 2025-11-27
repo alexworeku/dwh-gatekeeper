@@ -1,0 +1,543 @@
+{
+  "validation_summary": {
+    "status": "FAILED",
+
+    "total_columns_compared": 21,
+
+    "total_schema_issues": 61,
+
+    "new_columns_found": 0,
+
+    "removed_columns_found": 1
+  },
+
+  "col_diff": {
+    "new_columns": [],
+
+    "removed_columns": ["is_fraud"]
+  },
+
+  "val_details": {
+    "amt": [
+      {
+        "data_type": {
+          "expected": "decimal",
+
+          "actual": "double"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 7,
+
+          "actual": 5
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 7,
+
+          "actual": 5
+        }
+      }
+    ],
+
+    "category": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 6,
+
+          "actual": 4
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 6,
+
+          "actual": 4
+        }
+      }
+    ],
+
+    "cc_num": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "bigint"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 4,
+
+          "actual": 2
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 4,
+
+          "actual": 2
+        }
+      }
+    ],
+
+    "city": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 14,
+
+          "actual": 10
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 14,
+
+          "actual": 10
+        }
+      }
+    ],
+
+    "city_pop": [
+      {
+        "ordinal_position": {
+          "expected": 17,
+
+          "actual": 15
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 17,
+
+          "actual": 15
+        }
+      }
+    ],
+
+    "dob": [
+      {
+        "data_type": {
+          "expected": "date",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 11,
+
+          "actual": 17
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 11,
+
+          "actual": 17
+        }
+      }
+    ],
+
+    "first": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 8,
+
+          "actual": 6
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 8,
+
+          "actual": 6
+        }
+      }
+    ],
+
+    "gender": [
+      {
+        "data_type": {
+          "expected": "char",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 10,
+
+          "actual": 8
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 10,
+
+          "actual": 8
+        }
+      }
+    ],
+
+    "job": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 12,
+
+          "actual": 16
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 12,
+
+          "actual": 16
+        }
+      }
+    ],
+
+    "last": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 9,
+
+          "actual": 7
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 9,
+
+          "actual": 7
+        }
+      }
+    ],
+
+    "lat": [
+      {
+        "data_type": {
+          "expected": "decimal",
+
+          "actual": "double"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 18,
+
+          "actual": 13
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 18,
+
+          "actual": 13
+        }
+      }
+    ],
+
+    "long": [
+      {
+        "data_type": {
+          "expected": "decimal",
+
+          "actual": "double"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 19,
+
+          "actual": 14
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 19,
+
+          "actual": 14
+        }
+      }
+    ],
+
+    "merch_lat": [
+      {
+        "data_type": {
+          "expected": "decimal",
+
+          "actual": "double"
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 20,
+
+          "actual": 20
+        }
+      }
+    ],
+
+    "merch_long": [
+      {
+        "data_type": {
+          "expected": "decimal",
+
+          "actual": "double"
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 21,
+
+          "actual": 21
+        }
+      }
+    ],
+
+    "merchant": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 5,
+
+          "actual": 3
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 5,
+
+          "actual": 3
+        }
+      }
+    ],
+
+    "state": [
+      {
+        "data_type": {
+          "expected": "char",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 15,
+
+          "actual": 11
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 15,
+
+          "actual": 11
+        }
+      }
+    ],
+
+    "street": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 13,
+
+          "actual": 9
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 13,
+
+          "actual": 9
+        }
+      }
+    ],
+
+    "trans_date_trans_time": [
+      {
+        "data_type": {
+          "expected": "datetime",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 2,
+
+          "actual": 1
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 2,
+
+          "actual": 1
+        }
+      }
+    ],
+
+    "trans_num": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "text"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 1,
+
+          "actual": 18
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 1,
+
+          "actual": 18
+        }
+      }
+    ],
+
+    "unix_time": [
+      {
+        "data_type": {
+          "expected": "bigint",
+
+          "actual": "int"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 3,
+
+          "actual": 19
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 3,
+
+          "actual": 19
+        }
+      }
+    ],
+
+    "zip": [
+      {
+        "data_type": {
+          "expected": "varchar",
+
+          "actual": "int"
+        }
+      },
+
+      {
+        "ordinal_position": {
+          "expected": 16,
+
+          "actual": 12
+        }
+      },
+
+      {
+        "max_length": {
+          "expected": 16,
+
+          "actual": 12
+        }
+      }
+    ]
+  }
+}

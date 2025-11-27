@@ -1,8 +1,9 @@
 import pandas as pd
-import json
+import logging
 from sqlalchemy import create_engine
 from collections import namedtuple
 import os
+from datetime import datetime
 
 
 def load_schema_from_db(db_user,db_passw, db_host,db_port, db_name,source_table,target_table):
@@ -18,7 +19,6 @@ def load_schema_from_db(db_user,db_passw, db_host,db_port, db_name,source_table,
     
     try:
         engine = create_engine(DATABASE_URL)
-        print("Engine created...")
         
         src_col_schema_df = pd.read_sql(f"{query} = '{source_table}';",engine)
         target_col_schema_df = pd.read_sql(f"{query} = '{target_table}';",engine)
@@ -26,11 +26,13 @@ def load_schema_from_db(db_user,db_passw, db_host,db_port, db_name,source_table,
         src_col_schema_df.sort_values(by="ORDINAL_POSITION")
         target_col_schema_df.sort_values(by="ORDINAL_POSITION")
         
-        print(f"Schema loaded.. \n{len(src_col_schema_df['COLUMN_NAME'][:5].values)} columns found\n{len(target_col_schema_df['COLUMN_NAME'].values)} columns expected")  
-
+        logging.info("Successfully loaded schemas from database. Source columns: %d, Target columns: %d.",
+                     len(src_col_schema_df), len(target_col_schema_df))
         return src_col_schema_df,target_col_schema_df
     except Exception as e:
-        print (f"Error: {e}")
+        logging.error("Failed to load schema from database for tables '%s' and '%s'. Error: %s", 
+                      source_table, target_table, e, exc_info=True)
+        raise
         
 def find_columns_diff(src_schema_df, dest_schema_df):
     
@@ -55,7 +57,7 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
         # Data Type Validation
         if row['DATA_TYPE'] != expected_col_def['DATA_TYPE']:
             validation_result[row['COLUMN_NAME']].extend([{
-                'data_type': {
+                'data_type_mismatch': {
                     'expected': expected_col_def['DATA_TYPE'],
                     'actual': row['DATA_TYPE']
                 }
@@ -64,7 +66,7 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
         # Ordinal position Validation 
         if row['ORDINAL_POSITION'] != expected_col_def['ORDINAL_POSITION'].item():
             validation_result[row['COLUMN_NAME']].extend([ {
-                'ordinal_position': {
+                'ordinal_position_drift': {
                     'expected': expected_col_def['ORDINAL_POSITION'].item(),
                     'actual': row['ORDINAL_POSITION']
                 }
@@ -73,7 +75,7 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
         # Length validation
         if row['CHARACTER_MAXIMUM_LENGTH']!= expected_col_def['CHARACTER_MAXIMUM_LENGTH'].item():
             validation_result[row['COLUMN_NAME']].extend([ {
-                'max_length': {
+                'max_length_mismatch': {
                     'expected': expected_col_def['ORDINAL_POSITION'].item(),
                     'actual': row['ORDINAL_POSITION']
                 }
@@ -81,13 +83,8 @@ def validate_col_details(actual_col_schema_df, expected_col_schema_df):
             issues_found_count+=1
     return issues_found_count,validation_result        
     
-def validate(source_table, target_table):
-    
-    DB_HOST = os.environ['DB_HOST']
-    DB_PORT = os.environ['DB_PORT']
-    DB_USER = os.environ["DB_USER"]
-    DB_PASSW = os.environ['DB_PASSW']
-    DB_NAME = os.environ['DB_NAME']
+def validate(source_table, target_table,DB_USER,DB_PASSW,DB_HOST,DB_PORT,DB_NAME):
+    logging.info("Starting schema validation for Source: '%s' against Target: '%s'.", source_table, target_table)
 
     src_col_schema_df, target_col_schema_df=load_schema_from_db(DB_USER,DB_PASSW,DB_HOST,DB_PORT,DB_NAME, source_table,target_table )
     
@@ -99,33 +96,36 @@ def validate(source_table, target_table):
     cols_to_validate_df = src_col_schema_df[~src_col_schema_df['COLUMN_NAME'].isin(new_cols)]
 
 
-    issues_found_count, col_validation_result = validate_col_details(cols_to_validate_df, target_col_schema_df)
+    col_schema_issues_count, col_validation_result = validate_col_details(cols_to_validate_df, target_col_schema_df)
 
-    status = issues_found_count=="SUCCESS" if issues_found_count==0 else "FAILED"
+    status = "SUCCESS" if col_schema_issues_count==0 else "FAILED"
+    
+    new_cols_count = len(new_cols)
+    removed_cols_count= len(removed_cols)
+    total_issues_count = col_schema_issues_count+new_cols_count+removed_cols_count
+    logging.info("Column reconciliation complete. New columns found: %d, Removed columns found: %d.", 
+                 new_cols_count, removed_cols_count)
+    logging.info("%d columns prepared for detailed attribute validation.", len(cols_to_validate_df))
     val_result = {
         "validation_summary":{
             "status":status,
+            "execution_time": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+            "source_schema":source_table,
+            "target_schema":target_table,
             "total_columns_compared":len(cols_to_validate_df),
-            "total_schema_issues": issues_found_count,
-            "new_columns_found": len(new_cols),
-            "removed_columns_found": len(removed_cols)
-            
+            "total_schema_issues": total_issues_count,
+            "new_columns_found": new_cols_count,
+            "removed_columns_found": removed_cols_count
         },
         "col_diff":{
-                "new_columns": list(new_cols),
-                "removed_columns": list(removed_cols)    
-                },
+            "new_columns": list(new_cols),
+            "removed_columns": list(removed_cols)    
+        },
         "val_details":col_validation_result
         
     }
-    # TODO: include validation summary
-    """
-    "validation_summary": {
-    "status": "FAILED", // Based on presence of CRITICAL errors
-    "total_columns_compared": 22,
-    "total_schema_issues": 35,
-    "new_columns_found": 5,
-    "removed_columns_found": 1
-}
-    """
+    if status == "SUCCESS":
+        logging.info("Schema validation finished: SUCCESS. No schema drift detected.")
+    else:
+        logging.warning("Schema validation finished: FAILED. Total issues detected: %d.", total_issues_count)
     return val_result
