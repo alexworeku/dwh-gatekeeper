@@ -1,9 +1,7 @@
 import validator
-from dotenv import load_dotenv
 import report_generator
 import logging
 import argparse
-import os
 def setup_arg_parser():
     arg_desc ="""
     Generates a multi-sheet Excel report detailing the schema validation differences 

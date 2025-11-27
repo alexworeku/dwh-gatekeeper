@@ -1,9 +1,4 @@
 import pandas as pd
-from tabulate import tabulate
-from markdown import markdown
-import tempfile
-import webbrowser
-import os
 import logging
 
 SEVERITY_MAPPING = {
@@ -13,19 +8,6 @@ SEVERITY_MAPPING = {
     "max_length_mismatch": "MEDIUM",
     "ordinal_position_drift": "LOW"
     }
-
-
-
-def open_report_via_browser(markdown_report):
-    html_report = markdown(markdown_report,extensions=['tables'])
-    
-    with tempfile.NamedTemporaryFile(mode="w",suffix=".html",encoding="utf-8",delete=False) as file:
-        file.write(html_report)
-        file_path = file.name
-        
-    report_path = "file://" + os.path.realpath(file_path)
-    webbrowser.open_new_tab(report_path)
-
 
 def generate_excel_report(report_json:dict):
     logging.info("Starting Excel report generation...")

@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 import pandas as pd
 import logging
 from sqlalchemy import create_engine
-from collections import namedtuple
 from datetime import datetime
 
 
